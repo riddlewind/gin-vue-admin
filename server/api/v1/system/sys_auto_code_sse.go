@@ -11,6 +11,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	systemService "github.com/flipped-aurora/gin-vue-admin/server/service/system"
 	"github.com/gin-contrib/sse"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -103,6 +104,7 @@ func (autoApi *AutoCodeApi) streamLLMAsSSE(c *gin.Context, llm common.JSONMap) e
 	reader := bufio.NewReader(res.Body)
 	lines := make([]string, 0, 8)
 	blockCount := 0
+	doneSent := false
 
 	global.GVA_LOG.Info("LLMAutoSSE 开始读取上游流数据...")
 
@@ -122,8 +124,12 @@ func (autoApi *AutoCodeApi) streamLLMAsSSE(c *gin.Context, llm common.JSONMap) e
 					global.GVA_LOG.Debug("LLMAutoSSE 转发 SSE 块", zap.Int("block", blockCount), zap.Strings("lines", lines))
 				}
 			}
-			if err := emitSSEBlock(c, lines); err != nil {
+			sent, err := emitSSEBlock(c, lines)
+			if err != nil {
 				return err
+			}
+			if sent {
+				doneSent = true
 			}
 			lines = lines[:0]
 		} else {
@@ -131,14 +137,22 @@ func (autoApi *AutoCodeApi) streamLLMAsSSE(c *gin.Context, llm common.JSONMap) e
 		}
 
 		if errors.Is(readErr, io.EOF) {
-			if err := emitSSEBlock(c, lines); err != nil {
+			sent, err := emitSSEBlock(c, lines)
+			if err != nil {
 				return err
 			}
-			if err := renderSSE(c, sse.Event{
-				Event: "done",
-				Data:  gin.H{"done": true},
-			}); err != nil {
-				return err
+			if sent {
+				doneSent = true
+			}
+			// 只有上游没发过 [DONE]（或不是标准 OpenAI 流）时才补一个结束事件，
+			// 否则前端会连收两次 done。
+			if !doneSent {
+				if err := renderSSE(c, sse.Event{
+					Event: "done",
+					Data:  gin.H{"done": true},
+				}); err != nil {
+					return err
+				}
 			}
 			flusher.Flush()
 			global.GVA_LOG.Info("LLMAutoSSE 流式转发完成", zap.Int("总块数", blockCount))
@@ -155,9 +169,9 @@ func prepareSSEHeaders(c *gin.Context) {
 	header.Set("X-Accel-Buffering", "no")
 }
 
-func emitSSEBlock(c *gin.Context, lines []string) error {
+func emitSSEBlock(c *gin.Context, lines []string) (doneSent bool, err error) {
 	if len(lines) == 0 {
-		return nil
+		return false, nil
 	}
 
 	eventName := "message"
@@ -177,13 +191,40 @@ func emitSSEBlock(c *gin.Context, lines []string) error {
 
 	rawData := strings.TrimSpace(strings.Join(dataLines, "\n"))
 	if rawData == "" {
-		return nil
+		return false, nil
 	}
 	if rawData == "[DONE]" {
-		return renderSSE(c, sse.Event{
+		// [DONE] 只表示"上游没有更多正文了"，这里先把 done 事件发出去，
+		// 并把 doneSent=true 带回主循环，避免 EOF 分支再补一次重复的 done。
+		if err := renderSSE(c, sse.Event{
 			Id:    eventID,
 			Event: "done",
 			Data:  gin.H{"done": true},
+		}); err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+
+	// OpenAI 兼容通道的上游分片长这样：{"choices":[{"delta":{"content":"xxx"}}]}
+	// 而前端 pickStreamText 只认顶层的 answer / text / content / output / delta / chunk，
+	// 所以必须在这里把 delta.content 提出来重新包一层，否则界面一个字都收不到。
+	if systemService.IsOpenAIProvider() {
+		if msg := systemService.OpenAIChunkError(rawData); msg != "" {
+			return false, renderSSE(c, sse.Event{
+				Id:    eventID,
+				Event: "error",
+				Data:  gin.H{"message": msg},
+			})
+		}
+		text, ok := systemService.ExtractOpenAIDelta(rawData)
+		if !ok {
+			return false, nil // 首帧 role、结束帧等没有正文，直接跳过
+		}
+		return false, renderSSE(c, sse.Event{
+			Id:    eventID,
+			Event: "message",
+			Data:  gin.H{"answer": text},
 		})
 	}
 
@@ -192,7 +233,7 @@ func emitSSEBlock(c *gin.Context, lines []string) error {
 		payload = rawData
 	}
 
-	return renderSSE(c, sse.Event{
+	return false, renderSSE(c, sse.Event{
 		Id:    eventID,
 		Event: eventName,
 		Data:  payload,

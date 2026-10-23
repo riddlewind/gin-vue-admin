@@ -1,16 +1,14 @@
 <template>
   <div class="gva-table-box ai-workflow-page space-y-4">
-    <warning-bar
-      href="https://plugin.gin-vue-admin.com/license"
-      title="本功能由于算力不足限制，已调整为仅对授权用户开放。"
-    />
     <el-card shadow="never">
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="max-w-3xl">
-          <h1 class="mt-2 text-2xl font-semibold text-slate-900">
+          <h1
+            class="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100"
+          >
             AI 需求分析与 Prompt 工作流
           </h1>
-<p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
+          <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
               会话会自动保存到后端。刷新页面后可以继续查看历史需求、按节点回看结果，并支持回滚到任意
               Assistant 节点后重新续聊。
             </p>
@@ -70,7 +68,8 @@
               <button
                 type="button"
                 class="rounded border px-4 py-4 text-left transition"
-:class="
+                @click="switchTab('analysis')"
+                :class="
                   activeTab === 'analysis'
                     ? 'border-sky-400 bg-sky-50 shadow-sm shadow-sky-100 dark:border-sky-500 dark:bg-sky-900/30'
                     : 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700'
@@ -115,12 +114,13 @@
               <button
                 type="button"
                 class="rounded border px-4 py-4 text-left transition"
-:class="
-                      activeTab === 'workflow'
-                        ? 'border-emerald-400 bg-emerald-50 shadow-sm shadow-emerald-100 dark:border-emerald-500 dark:bg-emerald-900/30'
-                        : 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700'
-                    "
-                  >
+                @click="switchTab('workflow')"
+                :class="
+                  activeTab === 'workflow'
+                    ? 'border-emerald-400 bg-emerald-50 shadow-sm shadow-emerald-100 dark:border-emerald-500 dark:bg-emerald-900/30'
+                    : 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700'
+                "
+              >
                 <div class="flex items-center justify-between gap-3">
                   <div>
                     <p
@@ -346,8 +346,8 @@
                 <el-button
                   :disabled="!workflowResult.steps.length"
                   :icon="DocumentCopy"
-                  @click="copyAllWorkflowPrompts"
-                  >复制全部</el-button
+                  @click="copyOneShotPrompt"
+                  >复制整段 Prompt</el-button
                 >
                 <el-button @click="startNewConversation('workflow')"
                   >清空</el-button
@@ -892,6 +892,25 @@
                     >步骤 {{ workflowResult.steps.length }}</el-tag
                   >
                 </div>
+                <!-- 一次粘贴入口：整段已含需求、项目约定、全部步骤与自检清单 -->
+                <div class="mt-4 flex flex-wrap items-center gap-2">
+                  <el-button
+                    type="primary"
+                    :icon="DocumentCopy"
+                    :disabled="!oneShotPromptText"
+                    @click="copyOneShotPrompt"
+                    >复制整段 Prompt（一次粘贴）</el-button
+                  >
+                  <el-button
+                    plain
+                    :disabled="!oneShotPromptText"
+                    @click="previewOneShotPrompt"
+                    >预览</el-button
+                  >
+                  <span class="text-xs text-slate-500 dark:text-slate-400"
+                    >整段已包含需求、项目约定、全部步骤与自检清单，粘贴一次即可</span
+                  >
+                </div>
               </div>
               <div v-if="workflowResult.steps.length" class="mt-4 space-y-3">
                 <div
@@ -932,10 +951,19 @@
                     </div>
                   </div>
                   <div class="mt-4 rounded bg-slate-950 p-4">
-                    <div
-                      class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
-                    >
-                      Prompt
+                    <div class="mb-2 flex items-center justify-between">
+                      <span
+                        class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+                        >Prompt</span
+                      >
+                      <el-button
+                        link
+                        size="small"
+                        class="!text-sky-300"
+                        :icon="DocumentCopy"
+                        @click="copyStepPrompt(step, index)"
+                        >复制此步</el-button
+                      >
                     </div>
                     <pre
                       class="max-h-[260px] overflow-auto whitespace-pre-wrap text-xs leading-6 text-slate-100"
@@ -1002,7 +1030,6 @@ import {
   getAIWorkflowSessionList,
   saveAIWorkflowSession
 } from '@/api/autoCode'
-import WarningBar from '@/components/warningBar/warningBar.vue'
 import { useUserStore } from '@/pinia/modules/user'
 
 defineOptions({ name: 'AIWorkflow' })
@@ -1067,7 +1094,14 @@ const parseJSON = (value) => {
   try {
     return JSON.parse(value)
   } catch (error) {
-    return null
+    // 模型经常在 JSON 字符串里写 Markdown 反引号并把它们转义成 \`，
+    // 而 JSON 只允许 \" \\ \/ \b \f \n \r \t \uXXXX，遇到 \` 会整段解析失败。
+    // 这里把非法转义补成合法转义后再试一次，失败才真的返回 null。
+    try {
+      return JSON.parse(value.replace(/\\(?!["\\/bfnrtu])/g, '\\\\'))
+    } catch (repairedError) {
+      return null
+    }
   }
 }
 const clone = (value, fallback = {}) => {
@@ -1248,9 +1282,17 @@ const extractJson = (text) => {
   if (!text || typeof text !== 'string') return null
   const direct = parseJSON(text.trim())
   if (direct) return direct
+  // 正常情况：取第一个 ```json ... ``` 块
   const code = text.match(/```(?:json)?\s*([\s\S]*?)```/i)?.[1]
   if (code) {
     const parsed = parseJSON(code.trim())
+    if (parsed) return parsed
+  }
+  // 兜底：模型常在 prompt 字段里再嵌一层 ```代码围栏```，非贪婪匹配会被内层围栏截断，
+  // 此时改用贪婪匹配一直取到最后一个围栏，通常能圈住完整的 JSON。
+  const greedy = text.match(/```(?:json)?\s*([\s\S]*)```/i)?.[1]
+  if (greedy) {
+    const parsed = parseJSON(greedy.trim())
     if (parsed) return parsed
   }
   const starts = [text.indexOf('{'), text.indexOf('[')].filter((i) => i >= 0)
@@ -2361,17 +2403,100 @@ const copyAnalysisResult = async () =>
     JSON.stringify(clone(analysisResult.value), null, 2),
     '已复制结构化分析结果'
   )
-const copyAllWorkflowPrompts = async () =>
-  copyText(
-    workflowResult.value.steps
-      .map(
-        (step, index) =>
-          `# ${index + 1}. ${step.title || `步骤 ${index + 1}`}\n${
-            step.prompt || ''
-          }`
-      )
-      .join('\n\n'),
-    '已复制全部 Prompt'
+// ---- 一次粘贴版 Prompt ----
+// 背景：模型会把需求拆成十几个步骤，每一步都要单独复制再粘给 AI，很费手。
+// 这里把「角色 + 需求 + 项目硬约定 + 全部步骤 + 自检清单」拼成一段自包含 Prompt，
+// 复制一次就能整段喂给 AI；步骤正文原样保留，只在外面加骨架，不改写模型输出。
+const ONE_SHOT_ROLE =
+  '你是 gin-vue-admin（GVA）项目的开发。请一次性完成下面全部改动：按顺序把每一处代码都落地，不要中途停下来问我确认，也不要只给方案或伪代码。全部做完后按最后一节自检，并列出你新建/修改过的文件清单。'
+
+// 这些是本项目反复踩过的坑。写进 Prompt 能显著减少「AI 一次做错再返工」的概率。
+const GVA_HARD_RULES = [
+  '后端 Go + Gin + GORM + Casbin（server/）；前端 Vue3 + Element Plus + Vite（web/，页面放 web/src/view/，接口封装放 web/src/api/）。',
+  '后端分层固定 Model -> Service -> API -> Router。新增模块必须同时补齐 5 个注册点：service/enter.go、api/v1/enter.go、router/enter.go、initialize/gorm_biz.go（AutoMigrate）、initialize/router_biz.go（初始化路由）。缺一个就会编译报错或路由 404。',
+  '模型内嵌 global.GVA_MODEL 提供 ID / CreatedAt / UpdatedAt / DeletedAt。序列化给前端的主键字段名是大写 ID，前端必须用 row.ID，写 row.id 会拿到 undefined，导致编辑变新增、删除报「ID不能为空」。',
+  'GORM 更新不要用 Save（会把 created_at 写成 0000-00-00，MySQL 严格模式报 1292）。用 db.Model(&X{}).Where("id = ?", id).Select(列白名单).Updates(&obj)，可空的时间列只在非零值时才加入白名单。',
+  '新增接口必须补权限数据：sys_apis 插接口记录 + casbin_rule 插 (角色ID, 路径, 方法)，路径不带 /api 前缀。改完 casbin 策略必须重启后端进程才生效。',
+  '前端 request 封装的 baseURL 已包含 /api，不要再手写前缀。DELETE 用请求体传 {id}，列表分页参数是 page / pageSize。',
+  '时间字段前端按 YYYY-MM-DD HH:mm 展示，后端接收 RFC3339 或 YYYY-MM-DD HH:mm:ss，注意转换不要丢时区。',
+  '不要修改与本次需求无关的文件，不要动 license / 版权声明 / 水印。'
+]
+
+/**
+ * 把工作流结果拼成一段可直接粘贴的完整 Prompt
+ *
+ * @param {object} result 工作流结果（含 steps / summary）
+ * @param {object} form 工作流表单（含 source / flowType / extraConstraints）
+ * @returns {string} 没有步骤时返回空串
+ */
+const buildOneShotPrompt = (result, form) => {
+  const steps = Array.isArray(result?.steps) ? result.steps : []
+  if (!steps.length) return ''
+
+  const requirement = String(form?.source || '').trim()
+  const summary = String(result?.summary || '').trim()
+  const extra = String(form?.extraConstraints || '').trim()
+  const flowLabel = FLOW_TYPE_LABEL_MAP[form?.flowType] || ''
+
+  const blocks = [ONE_SHOT_ROLE]
+
+  const requirementLines = ['## 一、需求']
+  if (flowLabel) requirementLines.push(`工作流目标：${flowLabel}`)
+  requirementLines.push(requirement || summary || '（需求正文见下方改动清单）')
+  if (summary && requirement && summary !== requirement) {
+    requirementLines.push('', `需求摘要：${summary}`)
+  }
+  if (extra) requirementLines.push('', `额外约束：${extra}`)
+  blocks.push(requirementLines.join('\n'))
+
+  blocks.push(
+    ['## 二、项目硬约定（必须遵守）']
+      .concat(GVA_HARD_RULES.map((rule, index) => `${index + 1}. ${rule}`))
+      .join('\n')
+  )
+
+  const listLines = ['## 三、改动清单（严格按顺序执行，一次做完）']
+  steps.forEach((step, index) => {
+    const lines = [`### ${index + 1}. ${step.title || `步骤 ${index + 1}`}`]
+    if (step.goal) lines.push(`目标：${step.goal}`)
+    if (step.expectedOutput) lines.push(`预期产出：${step.expectedOutput}`)
+    lines.push('', step.prompt || '（模型未返回该步骤的 Prompt）')
+    listLines.push(lines.join('\n'))
+  })
+  blocks.push(listLines.join('\n\n'))
+
+  blocks.push(
+    [
+      '## 四、完成前自检',
+      '- 执行 `cd server && go build ./...` 无报错，`go vet ./...` 无新增告警。',
+      '- 5 个注册点都有对应改动，启动日志里能看到新表注册与新路由注册。',
+      '- 建表成功：执行 SHOW TABLES LIKE 表名 能查到，字段与模型定义一致。',
+      '- 接口逐个用 curl 或 Postman 打过：新增 / 详情 / 更新 / 列表 / 删除都返回 code=0，且更新后时间字段没被清零。',
+      '- 权限数据已补（sys_apis + casbin_rule），重启后端后接口不再返回 code:7 权限不足。',
+      '- 前端页面能正常打开，搜索、分页、弹窗表单可用，按钮权限生效，浏览器控制台无报错。',
+      '- 没有留下临时文件、调试日志、写死的测试数据。',
+      '',
+      '最后请输出：① 改动文件清单（新增/修改） ② 自检结果 ③ 还需要我手动做的事（例如执行某条 SQL、重启服务）。'
+    ].join('\n')
+  )
+
+  return blocks.join('\n\n') + '\n'
+}
+
+const oneShotPromptText = computed(() =>
+  buildOneShotPrompt(workflowResult.value, workflowForm)
+)
+
+const copyOneShotPrompt = async () =>
+  copyText(oneShotPromptText.value, '已复制整段 Prompt，直接粘贴给 AI 即可')
+
+const copyStepPrompt = async (step, index) =>
+  copyText(step?.prompt || '', `已复制第 ${index + 1} 步 Prompt`)
+
+const previewOneShotPrompt = () =>
+  openDrawer(
+    '整段 Prompt 预览（复制后一次粘贴给 AI）',
+    oneShotPromptText.value
   )
 const copyWorkflowRaw = async () =>
   copyText(

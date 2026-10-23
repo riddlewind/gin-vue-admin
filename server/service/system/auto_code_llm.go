@@ -16,6 +16,11 @@ import (
 )
 
 func (s *AutoCodeService) LLMAuto(ctx context.Context, llm common.JSONMap) (interface{}, error) {
+	// OpenAI 兼容通道要把整个请求体翻译成 chat messages，复用不了下面的 AiPath 逻辑
+	if IsOpenAIProvider() {
+		return s.openAIChat(ctx, llm)
+	}
+
 	path, err := buildLLMAutoPath(llm)
 	if err != nil {
 		return nil, err
@@ -58,6 +63,11 @@ func (s *AutoCodeService) LLMAuto(ctx context.Context, llm common.JSONMap) (inte
 }
 
 func (s *AutoCodeService) LLMAutoStream(ctx context.Context, llm common.JSONMap) (*http.Response, error) {
+	// 流式同样分两条路：中转站要 stream=true + messages，官方 AiPath 要 response_mode=streaming
+	if IsOpenAIProvider() {
+		return s.openAIStream(ctx, llm)
+	}
+
 	path, err := buildLLMAutoPath(llm)
 	if err != nil {
 		return nil, err
