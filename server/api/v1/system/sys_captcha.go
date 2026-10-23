@@ -27,18 +27,7 @@ type BaseApi struct{}
 // @Router    /base/captcha [post]
 func (b *BaseApi) Captcha(c *gin.Context) {
 	// 判断验证码是否开启
-	openCaptcha := global.GVA_CONFIG.Captcha.OpenCaptcha               // 是否开启防爆次数
-	openCaptchaTimeOut := global.GVA_CONFIG.Captcha.OpenCaptchaTimeOut // 缓存超时时间
-	key := c.ClientIP()
-	v, ok := global.BlackCache.Get(key)
-	if !ok {
-		global.BlackCache.Set(key, 1, time.Second*time.Duration(openCaptchaTimeOut))
-	}
-
-	var oc bool
-	if openCaptcha == 0 || openCaptcha < interfaceToInt(v) {
-		oc = true
-	}
+	oc := captchaRequired(c)
 	// 字符,公式,验证码配置
 	// 生成默认数字的driver
 	driver := base64Captcha.NewDriverDigit(global.GVA_CONFIG.Captcha.ImgHeight, global.GVA_CONFIG.Captcha.ImgWidth, global.GVA_CONFIG.Captcha.KeyLong, 0.7, 80)
@@ -56,6 +45,38 @@ func (b *BaseApi) Captcha(c *gin.Context) {
 		CaptchaLength: global.GVA_CONFIG.Captcha.KeyLong,
 		OpenCaptcha:   oc,
 	}, "验证码获取成功", c)
+}
+
+// captchaRequired 判断当前请求是否需要填写验证码。
+//
+// 规则由 config.yaml 的 captcha.open-captcha 决定：
+//   - 负数（推荐 -1）：永久关闭，任何情况下都不要求验证码；
+//   - 0：每次登录都必须填，最严格；
+//   - 正数 N：同一 IP 密码错误累计达到 N 次后开始要求，即"防爆破次数"。
+//
+// [注意] 本函数同时被登录接口（sys_user.go 的 Login）和验证码接口使用。
+// 两边必须共用同一套判断，否则会出现"前端不显示验证码、后端却仍在校验"
+// 或者"前端显示了、后端根本不看"的错位。
+//
+// [Go] 这里用 switch 而不是 if-else 链，是为了让三种取值语义在视觉上一目了然。
+func captchaRequired(c *gin.Context) bool {
+	openCaptcha := global.GVA_CONFIG.Captcha.OpenCaptcha
+	key := c.ClientIP()
+
+	// 首次访问时初始化该 IP 的失败计数，后续失败由各接口 Increment 累加
+	v, ok := global.BlackCache.Get(key)
+	if !ok {
+		global.BlackCache.Set(key, 1, time.Second*time.Duration(global.GVA_CONFIG.Captcha.OpenCaptchaTimeOut))
+	}
+
+	switch {
+	case openCaptcha < 0:
+		return false
+	case openCaptcha == 0:
+		return true
+	default:
+		return openCaptcha < interfaceToInt(v)
+	}
 }
 
 // 类型转换
