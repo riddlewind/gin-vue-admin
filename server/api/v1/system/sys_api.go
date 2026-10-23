@@ -15,7 +15,7 @@ import (
 
 type SystemApiApi struct{}
 
-// CreateApi
+// CreateApi 创建接口
 // @Tags      SysApi
 // @Summary   创建基础api
 // @Security  ApiKeyAuth
@@ -45,7 +45,7 @@ func (s *SystemApiApi) CreateApi(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 }
 
-// SyncApi
+// SyncApi 同步接口
 // @Tags      SysApi
 // @Summary   同步API
 // @Security  ApiKeyAuth
@@ -67,7 +67,7 @@ func (s *SystemApiApi) SyncApi(c *gin.Context) {
 	}, c)
 }
 
-// GetApiGroups
+// GetApiGroups 获取接口分组
 // @Tags      SysApi
 // @Summary   获取API分组
 // @Security  ApiKeyAuth
@@ -88,7 +88,7 @@ func (s *SystemApiApi) GetApiGroups(c *gin.Context) {
 	}, c)
 }
 
-// IgnoreApi
+// IgnoreApi 忽略接口
 // @Tags      IgnoreApi
 // @Summary   忽略API
 // @Security  ApiKeyAuth
@@ -112,7 +112,7 @@ func (s *SystemApiApi) IgnoreApi(c *gin.Context) {
 	response.Ok(c)
 }
 
-// EnterSyncApi
+// EnterSyncApi 开始同步接口
 // @Tags      SysApi
 // @Summary   确认同步API
 // @Security  ApiKeyAuth
@@ -136,7 +136,7 @@ func (s *SystemApiApi) EnterSyncApi(c *gin.Context) {
 	response.Ok(c)
 }
 
-// DeleteApi
+// DeleteApi 删除接口
 // @Tags      SysApi
 // @Summary   删除api
 // @Security  ApiKeyAuth
@@ -166,7 +166,7 @@ func (s *SystemApiApi) DeleteApi(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// GetApiList
+// GetApiList 获取接口列表
 // @Tags      SysApi
 // @Summary   分页获取API列表
 // @Security  ApiKeyAuth
@@ -201,7 +201,7 @@ func (s *SystemApiApi) GetApiList(c *gin.Context) {
 	}, "获取成功", c)
 }
 
-// GetApiById
+// GetApiById 按 ID 获取接口
 // @Tags      SysApi
 // @Summary   根据id获取api
 // @Security  ApiKeyAuth
@@ -231,7 +231,7 @@ func (s *SystemApiApi) GetApiById(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysAPIResponse{Api: api}, "获取成功", c)
 }
 
-// UpdateApi
+// UpdateApi 更新接口
 // @Tags      SysApi
 // @Summary   修改基础api
 // @Security  ApiKeyAuth
@@ -261,7 +261,7 @@ func (s *SystemApiApi) UpdateApi(c *gin.Context) {
 	response.OkWithMessage("修改成功", c)
 }
 
-// GetAllApis
+// GetAllApis 获取全部接口
 // @Tags      SysApi
 // @Summary   获取所有的Api 不分页
 // @Security  ApiKeyAuth
@@ -280,7 +280,7 @@ func (s *SystemApiApi) GetAllApis(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysAPIListResponse{Apis: apis}, "获取成功", c)
 }
 
-// DeleteApisByIds
+// DeleteApisByIds 按 ID 批量删除接口
 // @Tags      SysApi
 // @Summary   删除选中Api
 // @Security  ApiKeyAuth
@@ -305,7 +305,7 @@ func (s *SystemApiApi) DeleteApisByIds(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// FreshCasbin
+// FreshCasbin 刷新 Casbin 策略
 // @Tags      SysApi
 // @Summary   刷新casbin缓存
 // @accept    application/json
@@ -322,7 +322,7 @@ func (s *SystemApiApi) FreshCasbin(c *gin.Context) {
 	response.OkWithMessage("刷新成功", c)
 }
 
-// GetApiRoles
+// GetApiRoles 获取接口关联的角色
 // @Tags      SysApi
 // @Summary   获取拥有指定API权限的角色ID列表
 // @Security  ApiKeyAuth
@@ -351,7 +351,7 @@ func (s *SystemApiApi) GetApiRoles(c *gin.Context) {
 	response.OkWithDetailed(authorityIds, "获取成功", c)
 }
 
-// SetApiRoles
+// SetApiRoles 设置接口关联的角色
 // @Tags      SysApi
 // @Summary   全量覆盖某API关联的角色列表
 // @Security  ApiKeyAuth

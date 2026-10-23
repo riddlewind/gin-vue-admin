@@ -5,7 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
-// AddMenuAuthorityInfo Add menu authority info structure
+// AddMenuAuthorityInfo 新增"菜单-角色"关联的入参结构
 type AddMenuAuthorityInfo struct {
 	Menus       []system.SysBaseMenu `json:"menus"`
 	AuthorityId uint                 `json:"authorityId"` // 角色ID

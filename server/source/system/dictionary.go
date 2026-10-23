@@ -12,7 +12,7 @@ const initOrderDict = initOrderCasbin + 1
 
 type initDict struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderDict, &initDict{})
 }

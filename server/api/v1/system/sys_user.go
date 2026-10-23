@@ -17,7 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Login
+// 登录
 // @Tags     Base
 // @Summary  用户登录
 // @Produce   application/json
@@ -108,11 +108,11 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 	// 记录登录成功日志
 	loginLogService.CreateLoginLog(system.SysLoginLog{
-		Username: user.Username,
-		Ip:       c.ClientIP(),
-		Agent:    c.Request.UserAgent(),
-		Status:   true,
-		UserID:   user.ID,
+		Username:     user.Username,
+		Ip:           c.ClientIP(),
+		Agent:        c.Request.UserAgent(),
+		Status:       true,
+		UserID:       user.ID,
 		ErrorMessage: "登录成功",
 	})
 	if !global.GVA_CONFIG.System.UseMultipoint {
@@ -160,7 +160,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 }
 
-// Register
+// 注册
 // @Tags     SysUser
 // @Summary  用户注册账号
 // @Produce   application/json
@@ -195,7 +195,7 @@ func (b *BaseApi) Register(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysUserResponse{User: userReturn}, "注册成功", c)
 }
 
-// ChangePassword
+// ChangePassword 修改密码
 // @Tags      SysUser
 // @Summary   用户修改密码
 // @Security  ApiKeyAuth
@@ -226,7 +226,7 @@ func (b *BaseApi) ChangePassword(c *gin.Context) {
 	response.OkWithMessage("修改成功", c)
 }
 
-// GetUserList
+// GetUserList 获取用户列表
 // @Tags      SysUser
 // @Summary   分页获取用户列表
 // @Security  ApiKeyAuth
@@ -261,7 +261,7 @@ func (b *BaseApi) GetUserList(c *gin.Context) {
 	}, "获取成功", c)
 }
 
-// SetUserAuthority
+// SetUserAuthority 设置用户角色
 // @Tags      SysUser
 // @Summary   更改用户权限
 // @Security  ApiKeyAuth
@@ -302,7 +302,7 @@ func (b *BaseApi) SetUserAuthority(c *gin.Context) {
 	response.OkWithMessage("修改成功", c)
 }
 
-// SetUserAuthorities
+// SetUserAuthorities 设置用户角色
 // @Tags      SysUser
 // @Summary   设置用户权限
 // @Security  ApiKeyAuth
@@ -328,7 +328,7 @@ func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 	response.OkWithMessage("修改成功", c)
 }
 
-// DeleteUser
+// DeleteUser 删除用户
 // @Tags      SysUser
 // @Summary   删除用户
 // @Security  ApiKeyAuth
@@ -363,7 +363,7 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// SetUserInfo
+// SetUserInfo 设置用户信息
 // @Tags      SysUser
 // @Summary   设置用户信息
 // @Security  ApiKeyAuth
@@ -411,7 +411,7 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// SetSelfInfo
+// SetSelfInfo 设置个人信息
 // @Tags      SysUser
 // @Summary   设置用户信息
 // @Security  ApiKeyAuth
@@ -446,7 +446,7 @@ func (b *BaseApi) SetSelfInfo(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// SetSelfSetting
+// SetSelfSetting 设置个人设置
 // @Tags      SysUser
 // @Summary   设置用户配置
 // @Security  ApiKeyAuth
@@ -472,7 +472,7 @@ func (b *BaseApi) SetSelfSetting(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// GetUserInfo
+// GetUserInfo 获取用户信息
 // @Tags      SysUser
 // @Summary   获取用户信息
 // @Security  ApiKeyAuth
@@ -491,7 +491,7 @@ func (b *BaseApi) GetUserInfo(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"userInfo": ReqUser}, "获取成功", c)
 }
 
-// ResetPassword
+// ResetPassword 重置密码
 // @Tags      SysUser
 // @Summary   重置用户密码
 // @Security  ApiKeyAuth

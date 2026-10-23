@@ -12,7 +12,7 @@ import (
 
 type CasbinApi struct{}
 
-// UpdateCasbin
+// UpdateCasbin 更新 Casbin 策略
 // @Tags      Casbin
 // @Summary   更新角色api权限
 // @Security  ApiKeyAuth
@@ -43,7 +43,7 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 	response.OkWithMessage("更新成功", c)
 }
 
-// GetPolicyPathByAuthorityId
+// GetPolicyPathByAuthorityId 按角色 ID 获取策略路径
 // @Tags      Casbin
 // @Summary   获取权限列表
 // @Security  ApiKeyAuth

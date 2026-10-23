@@ -251,21 +251,21 @@ func (s *autoCodePlugin) PubPlug(plugName string) (zipPath string, err error) {
 		serverPath: plugName + "/server/plugin/" + plugName,
 	})
 
-	// create the output file we'll write to
+	// 创建待写入的输出文件
 	out, err := os.Create(fileName)
 	if err != nil {
 		return
 	}
 	defer out.Close()
 
-	// we can use the CompressedArchive type to gzip a tarball
+	// 可以用 CompressedArchive 类型把 tar 包再 gzip 一层
 	// (compression is not required; you could use Tar directly)
 	format := archives.CompressedArchive{
 		//Compression: archives.Gz{},
 		Archival: archives.Zip{},
 	}
 
-	// create the archive
+	// 创建压缩包
 	err = format.Archive(context.Background(), out, files)
 	if err != nil {
 		return
@@ -445,7 +445,7 @@ func GetMenuIds(menu system.SysBaseMenu, ids *[]int) {
 	var children []system.SysBaseMenu
 	global.GVA_DB.Where("parent_id = ?", menu.ID).Find(&children)
 	for _, child := range children {
-        // 先递归收集子菜单
+		// 先递归收集子菜单
 		GetMenuIds(child, ids)
 	}
 }
@@ -471,9 +471,9 @@ func removePluginRegisterImport(packageName string) error {
 	}
 
 	importPath := fmt.Sprintf("%s/plugin/%s", module, packageName)
-    importLit := fmt.Sprintf("%q", importPath)
+	importLit := fmt.Sprintf("%q", importPath)
 
-    // 移除 import
+	// 移除 import
 	var newDecls []goast.Decl
 	for _, decl := range astFile.Decls {
 		genDecl, ok := decl.(*goast.GenDecl)
@@ -493,7 +493,7 @@ func removePluginRegisterImport(packageName string) error {
 					newSpecs = append(newSpecs, spec)
 				}
 			}
-            // 如果还有其他import，保留该 decl
+			// 如果还有其他import，保留该 decl
 			if len(newSpecs) > 0 {
 				genDecl.Specs = newSpecs
 				newDecls = append(newDecls, genDecl)

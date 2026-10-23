@@ -13,7 +13,7 @@ const initOrderAuthority = initOrderCasbin + 1
 
 type initAuthority struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderAuthority, &initAuthority{})
 }
@@ -52,7 +52,7 @@ func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, er
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrapf(err, "%s表数据初始化失败!", sysModel.SysAuthority{}.TableName())
 	}
-	// data authority
+	// 数据权限
 	if err := db.Model(&entities[0]).Association("DataAuthorityId").Replace(
 		[]*sysModel.SysAuthority{
 			{AuthorityId: 888},

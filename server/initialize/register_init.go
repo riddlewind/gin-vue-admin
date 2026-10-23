@@ -6,5 +6,5 @@ import (
 )
 
 func init() {
-	// do nothing,only import source package so that inits can be registered
+	// 空实现：仅导入源码包，使其 init() 能被注册执行
 }

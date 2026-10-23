@@ -10,7 +10,7 @@ import (
 
 type AuthorityBtnApi struct{}
 
-// GetAuthorityBtn
+// GetAuthorityBtn 获取角色按钮权限
 // @Tags      AuthorityBtn
 // @Summary   获取权限按钮
 // @Security  ApiKeyAuth
@@ -35,7 +35,7 @@ func (a *AuthorityBtnApi) GetAuthorityBtn(c *gin.Context) {
 	response.OkWithDetailed(res, "查询成功", c)
 }
 
-// SetAuthorityBtn
+// SetAuthorityBtn 设置角色按钮权限
 // @Tags      AuthorityBtn
 // @Summary   设置权限按钮
 // @Security  ApiKeyAuth
@@ -60,7 +60,7 @@ func (a *AuthorityBtnApi) SetAuthorityBtn(c *gin.Context) {
 	response.OkWithMessage("分配成功", c)
 }
 
-// CanRemoveAuthorityBtn
+// CanRemoveAuthorityBtn 是否可移除角色按钮
 // @Tags      AuthorityBtn
 // @Summary   设置权限按钮
 // @Security  ApiKeyAuth

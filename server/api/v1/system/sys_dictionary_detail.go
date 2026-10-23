@@ -14,7 +14,7 @@ import (
 
 type DictionaryDetailApi struct{}
 
-// CreateSysDictionaryDetail
+// CreateSysDictionaryDetail 创建系统字典详情
 // @Tags      SysDictionaryDetail
 // @Summary   创建SysDictionaryDetail
 // @Security  ApiKeyAuth
@@ -39,7 +39,7 @@ func (s *DictionaryDetailApi) CreateSysDictionaryDetail(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 }
 
-// DeleteSysDictionaryDetail
+// DeleteSysDictionaryDetail 删除系统字典详情
 // @Tags      SysDictionaryDetail
 // @Summary   删除SysDictionaryDetail
 // @Security  ApiKeyAuth
@@ -64,7 +64,7 @@ func (s *DictionaryDetailApi) DeleteSysDictionaryDetail(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// UpdateSysDictionaryDetail
+// UpdateSysDictionaryDetail 更新系统字典详情
 // @Tags      SysDictionaryDetail
 // @Summary   更新SysDictionaryDetail
 // @Security  ApiKeyAuth
@@ -89,7 +89,7 @@ func (s *DictionaryDetailApi) UpdateSysDictionaryDetail(c *gin.Context) {
 	response.OkWithMessage("更新成功", c)
 }
 
-// FindSysDictionaryDetail
+// FindSysDictionaryDetail 查询系统字典详情
 // @Tags      SysDictionaryDetail
 // @Summary   用id查询SysDictionaryDetail
 // @Security  ApiKeyAuth
@@ -119,7 +119,7 @@ func (s *DictionaryDetailApi) FindSysDictionaryDetail(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"reSysDictionaryDetail": reSysDictionaryDetail}, "查询成功", c)
 }
 
-// GetSysDictionaryDetailList
+// GetSysDictionaryDetailList 获取系统字典详情列表
 // @Tags      SysDictionaryDetail
 // @Summary   分页获取SysDictionaryDetail列表
 // @Security  ApiKeyAuth
@@ -149,7 +149,7 @@ func (s *DictionaryDetailApi) GetSysDictionaryDetailList(c *gin.Context) {
 	}, "获取成功", c)
 }
 
-// GetDictionaryTreeList
+// GetDictionaryTreeList 获取字典树列表
 // @Tags      SysDictionaryDetail
 // @Summary   获取字典详情树形结构
 // @Security  ApiKeyAuth
@@ -172,7 +172,7 @@ func (s *DictionaryDetailApi) GetDictionaryTreeList(c *gin.Context) {
 	} else {
 		id = uint(idUint64)
 	}
-	
+
 	list, err := dictionaryDetailService.GetDictionaryTreeList(id)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -182,7 +182,7 @@ func (s *DictionaryDetailApi) GetDictionaryTreeList(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"list": list}, "获取成功", c)
 }
 
-// GetDictionaryTreeListByType
+// GetDictionaryTreeListByType 按类型获取字典树列表
 // @Tags      SysDictionaryDetail
 // @Summary   根据字典类型获取字典详情树形结构
 // @Security  ApiKeyAuth
@@ -197,7 +197,7 @@ func (s *DictionaryDetailApi) GetDictionaryTreeListByType(c *gin.Context) {
 		response.FailWithMessage("字典类型不能为空", c)
 		return
 	}
-	
+
 	list, err := dictionaryDetailService.GetDictionaryTreeListByType(dictType)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -207,7 +207,7 @@ func (s *DictionaryDetailApi) GetDictionaryTreeListByType(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"list": list}, "获取成功", c)
 }
 
-// GetDictionaryDetailsByParent
+// GetDictionaryDetailsByParent 按父级获取字典详情
 // @Tags      SysDictionaryDetail
 // @Summary   根据父级ID获取字典详情
 // @Security  ApiKeyAuth
@@ -223,7 +223,7 @@ func (s *DictionaryDetailApi) GetDictionaryDetailsByParent(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	
+
 	list, err := dictionaryDetailService.GetDictionaryDetailsByParent(req)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
@@ -233,7 +233,7 @@ func (s *DictionaryDetailApi) GetDictionaryDetailsByParent(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"list": list}, "获取成功", c)
 }
 
-// GetDictionaryPath
+// GetDictionaryPath 获取字典路径
 // @Tags      SysDictionaryDetail
 // @Summary   获取字典详情的完整路径
 // @Security  ApiKeyAuth
@@ -248,7 +248,7 @@ func (s *DictionaryDetailApi) GetDictionaryPath(c *gin.Context) {
 		response.FailWithMessage("字典详情ID不能为空", c)
 		return
 	}
-	
+
 	var id uint
 	if idUint64, err := strconv.ParseUint(idStr, 10, 32); err != nil {
 		response.FailWithMessage("字典详情ID格式错误", c)
@@ -256,7 +256,7 @@ func (s *DictionaryDetailApi) GetDictionaryPath(c *gin.Context) {
 	} else {
 		id = uint(idUint64)
 	}
-	
+
 	path, err := dictionaryDetailService.GetDictionaryPath(id)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))

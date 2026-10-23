@@ -25,7 +25,7 @@ type MongoHost struct {
 	Port string `json:"port" yaml:"port" mapstructure:"port"` // 端口
 }
 
-// Uri .
+// URI 地址。
 func (x *Mongo) Uri() string {
 	length := len(x.Hosts)
 	hosts := make([]string, 0, length)

@@ -16,7 +16,7 @@ import (
 
 type AutoCodePluginApi struct{}
 
-// Install
+// 安装
 // @Tags      AutoCodePlugin
 // @Summary   安装插件
 // @Security  ApiKeyAuth
@@ -55,7 +55,7 @@ func (a *AutoCodePluginApi) Install(c *gin.Context) {
 		}}, c)
 }
 
-// Packaged
+// 打包
 // @Tags      AutoCodePlugin
 // @Summary   打包插件
 // @Security  ApiKeyAuth
@@ -75,7 +75,7 @@ func (a *AutoCodePluginApi) Packaged(c *gin.Context) {
 	response.OkWithMessage(fmt.Sprintf("打包成功,文件路径为:%s", zipPath), c)
 }
 
-// InitMenu
+// InitMenu 初始化菜单
 // @Tags      AutoCodePlugin
 // @Summary   打包插件
 // @Security  ApiKeyAuth
@@ -99,7 +99,7 @@ func (a *AutoCodePluginApi) InitMenu(c *gin.Context) {
 	response.OkWithMessage("文件变更成功", c)
 }
 
-// InitAPI
+// InitAPI 初始化接口
 // @Tags      AutoCodePlugin
 // @Summary   打包插件
 // @Security  ApiKeyAuth
@@ -123,7 +123,7 @@ func (a *AutoCodePluginApi) InitAPI(c *gin.Context) {
 	response.OkWithMessage("文件变更成功", c)
 }
 
-// InitDictionary
+// InitDictionary 初始化字典
 // @Tags      AutoCodePlugin
 // @Summary   打包插件
 // @Security  ApiKeyAuth
@@ -147,7 +147,7 @@ func (a *AutoCodePluginApi) InitDictionary(c *gin.Context) {
 	response.OkWithMessage("文件变更成功", c)
 }
 
-// GetPluginList
+// GetPluginList 获取插件列表
 // @Tags      AutoCodePlugin
 // @Summary   获取插件列表
 // @Security  ApiKeyAuth
@@ -196,7 +196,7 @@ func (a *AutoCodePluginApi) GetPluginList(c *gin.Context) {
 	response.OkWithDetailed(list, "获取成功", c)
 }
 
-// Remove
+// 移除
 // @Tags      AutoCodePlugin
 // @Summary   删除插件
 // @Security  ApiKeyAuth

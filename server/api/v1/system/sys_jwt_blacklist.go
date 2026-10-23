@@ -11,7 +11,7 @@ import (
 
 type JwtApi struct{}
 
-// JsonInBlacklist
+// JsonInBlacklist 加入 JWT 黑名单
 // @Tags      Jwt
 // @Summary   jwt加入黑名单
 // @Security  ApiKeyAuth

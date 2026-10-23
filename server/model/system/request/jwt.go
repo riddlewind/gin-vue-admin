@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// CustomClaims structure
+// CustomClaims 自定义 JWT 载荷结构
 type CustomClaims struct {
 	BaseClaims
 	BufferTime int64

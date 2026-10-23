@@ -12,7 +12,7 @@ import (
 
 type SystemApi struct{}
 
-// GetSystemConfig
+// GetSystemConfig 获取系统配置
 // @Tags      System
 // @Summary   获取配置文件内容
 // @Security  ApiKeyAuth
@@ -29,7 +29,7 @@ func (s *SystemApi) GetSystemConfig(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysConfigResponse{Config: config}, "获取成功", c)
 }
 
-// SetSystemConfig
+// SetSystemConfig 设置系统配置
 // @Tags      System
 // @Summary   设置配置文件内容
 // @Security  ApiKeyAuth
@@ -53,7 +53,7 @@ func (s *SystemApi) SetSystemConfig(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// ReloadSystem
+// ReloadSystem 重载系统
 // @Tags      System
 // @Summary   重载系统
 // @Security  ApiKeyAuth
@@ -71,7 +71,7 @@ func (s *SystemApi) ReloadSystem(c *gin.Context) {
 	response.OkWithMessage("重载系统成功", c)
 }
 
-// GetServerInfo
+// GetServerInfo 获取服务器信息
 // @Tags      System
 // @Summary   获取服务器信息
 // @Security  ApiKeyAuth

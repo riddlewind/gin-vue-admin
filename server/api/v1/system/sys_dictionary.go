@@ -11,7 +11,7 @@ import (
 
 type DictionaryApi struct{}
 
-// CreateSysDictionary
+// CreateSysDictionary 创建系统字典
 // @Tags      SysDictionary
 // @Summary   创建SysDictionary
 // @Security  ApiKeyAuth
@@ -36,7 +36,7 @@ func (s *DictionaryApi) CreateSysDictionary(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 }
 
-// DeleteSysDictionary
+// DeleteSysDictionary 删除系统字典
 // @Tags      SysDictionary
 // @Summary   删除SysDictionary
 // @Security  ApiKeyAuth
@@ -61,7 +61,7 @@ func (s *DictionaryApi) DeleteSysDictionary(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// UpdateSysDictionary
+// UpdateSysDictionary 更新系统字典
 // @Tags      SysDictionary
 // @Summary   更新SysDictionary
 // @Security  ApiKeyAuth
@@ -86,7 +86,7 @@ func (s *DictionaryApi) UpdateSysDictionary(c *gin.Context) {
 	response.OkWithMessage("更新成功", c)
 }
 
-// FindSysDictionary
+// FindSysDictionary 查询系统字典
 // @Tags      SysDictionary
 // @Summary   用id查询SysDictionary
 // @Security  ApiKeyAuth
@@ -111,7 +111,7 @@ func (s *DictionaryApi) FindSysDictionary(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"resysDictionary": sysDictionary}, "查询成功", c)
 }
 
-// GetSysDictionaryList
+// GetSysDictionaryList 获取系统字典列表
 // @Tags      SysDictionary
 // @Summary   分页获取SysDictionary列表
 // @Security  ApiKeyAuth
@@ -136,7 +136,7 @@ func (s *DictionaryApi) GetSysDictionaryList(c *gin.Context) {
 	response.OkWithDetailed(list, "获取成功", c)
 }
 
-// ExportSysDictionary
+// ExportSysDictionary 导出系统字典
 // @Tags      SysDictionary
 // @Summary   导出字典JSON（包含字典详情）
 // @Security  ApiKeyAuth
@@ -165,7 +165,7 @@ func (s *DictionaryApi) ExportSysDictionary(c *gin.Context) {
 	response.OkWithDetailed(exportData, "导出成功", c)
 }
 
-// ImportSysDictionary
+// ImportSysDictionary 导入系统字典
 // @Tags      SysDictionary
 // @Summary   导入字典JSON（包含字典详情）
 // @Security  ApiKeyAuth

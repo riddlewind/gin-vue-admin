@@ -7,7 +7,7 @@ var (
 	registry   []Plugin
 )
 
-// Register records a plugin for auto initialization.
+// Register 登记插件，供后续自动初始化使用。
 func Register(p Plugin) {
 	if p == nil {
 		return
@@ -17,7 +17,7 @@ func Register(p Plugin) {
 	registryMu.Unlock()
 }
 
-// Registered returns a snapshot of all registered plugins.
+// Registered 返回当前已注册插件的快照。
 func Registered() []Plugin {
 	registryMu.RLock()
 	defer registryMu.RUnlock()

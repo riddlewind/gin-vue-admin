@@ -144,7 +144,7 @@ func (sysExportTemplateService *SysExportTemplateService) ExportExcel(templateID
 			fmt.Println(err)
 		}
 	}()
-	// Create a new sheet.
+	// 新建一个工作表。
 	index, err := f.NewSheet("Sheet1")
 	if err != nil {
 		fmt.Println(err)
@@ -567,7 +567,7 @@ func (sysExportTemplateService *SysExportTemplateService) ExportTemplate(templat
 			fmt.Println(err)
 		}
 	}()
-	// Create a new sheet.
+	// 新建一个工作表。
 	index, err := f.NewSheet("Sheet1")
 	if err != nil {
 		fmt.Println(err)

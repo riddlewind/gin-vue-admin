@@ -17,7 +17,7 @@ var store = base64Captcha.DefaultMemStore
 
 type BaseApi struct{}
 
-// Captcha
+// Captcha 验证码
 // @Tags      Base
 // @Summary   生成验证码
 // @Security  ApiKeyAuth

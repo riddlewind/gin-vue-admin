@@ -83,7 +83,7 @@ func (*AwsS3) DeleteFile(key string) error {
 	return nil
 }
 
-// newS3Client creates an S3 v2 client with static credentials and optional custom endpoint.
+// newS3Client 使用静态凭证创建 S3 v2 客户端，可选自定义 endpoint。
 // minio在这里设置Endpoint地址,可以兼容
 func newS3Client() *s3.Client {
 	cfg := global.GVA_CONFIG.AwsS3

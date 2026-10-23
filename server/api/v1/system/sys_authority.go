@@ -14,7 +14,7 @@ import (
 
 type AuthorityApi struct{}
 
-// CreateAuthority
+// CreateAuthority 创建角色
 // @Tags      Authority
 // @Summary   创建角色
 // @Security  ApiKeyAuth
@@ -55,7 +55,7 @@ func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, "创建成功", c)
 }
 
-// CopyAuthority
+// CopyAuthority 复制角色
 // @Tags      Authority
 // @Summary   拷贝角色
 // @Security  ApiKeyAuth
@@ -91,7 +91,7 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, "拷贝成功", c)
 }
 
-// DeleteAuthority
+// DeleteAuthority 删除角色
 // @Tags      Authority
 // @Summary   删除角色
 // @Security  ApiKeyAuth
@@ -121,7 +121,7 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// UpdateAuthority
+// UpdateAuthority 更新角色
 // @Tags      Authority
 // @Summary   更新角色信息
 // @Security  ApiKeyAuth
@@ -151,7 +151,7 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authority}, "更新成功", c)
 }
 
-// GetAuthorityList
+// GetAuthorityList 获取角色列表
 // @Tags      Authority
 // @Summary   分页获取角色列表
 // @Security  ApiKeyAuth
@@ -171,7 +171,7 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 	response.OkWithDetailed(list, "获取成功", c)
 }
 
-// SetDataAuthority
+// SetDataAuthority 设置数据权限
 // @Tags      Authority
 // @Summary   设置角色资源权限
 // @Security  ApiKeyAuth
@@ -202,7 +202,7 @@ func (a *AuthorityApi) SetDataAuthority(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// GetUsersByAuthority
+// GetUsersByAuthority 获取角色下的用户
 // @Tags      Authority
 // @Summary   获取拥有指定角色的用户ID列表
 // @Security  ApiKeyAuth
@@ -229,7 +229,7 @@ func (a *AuthorityApi) GetUsersByAuthority(c *gin.Context) {
 	response.OkWithDetailed(userIds, "获取成功", c)
 }
 
-// SetRoleUsers
+// SetRoleUsers 设置角色下的用户
 // @Tags      Authority
 // @Summary   全量覆盖某角色关联的用户列表
 // @Security  ApiKeyAuth

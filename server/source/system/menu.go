@@ -13,7 +13,7 @@ const initOrderMenu = initOrderAuthority + 1
 
 type initMenu struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderMenu, &initMenu{})
 }

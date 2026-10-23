@@ -11,7 +11,7 @@ import (
 
 type AutoCodeTemplateApi struct{}
 
-// Preview
+// 预览
 // @Tags      AutoCodeTemplate
 // @Summary   预览创建后的代码
 // @Security  ApiKeyAuth
@@ -47,7 +47,7 @@ func (a *AutoCodeTemplateApi) Preview(c *gin.Context) {
 	}
 }
 
-// Create
+// 创建
 // @Tags      AutoCodeTemplate
 // @Summary   自动代码模板
 // @Security  ApiKeyAuth
@@ -82,7 +82,7 @@ func (a *AutoCodeTemplateApi) Create(c *gin.Context) {
 	}
 }
 
-// AddFunc
+// 新增函数
 // @Tags      AddFunc
 // @Summary   增加方法
 // @Security  ApiKeyAuth

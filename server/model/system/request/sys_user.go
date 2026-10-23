@@ -5,7 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
-// Register User register structure
+// Register 用户注册的入参结构
 type Register struct {
 	Username     string `json:"userName" example:"用户名"`
 	Password     string `json:"passWord" example:"密码"`
@@ -18,7 +18,7 @@ type Register struct {
 	Email        string `json:"email" example:"电子邮箱"`
 }
 
-// Login User login structure
+// Login 用户登录的入参结构
 type Login struct {
 	Username  string `json:"username"`  // 用户名
 	Password  string `json:"password"`  // 密码
@@ -26,7 +26,7 @@ type Login struct {
 	CaptchaId string `json:"captchaId"` // 验证码ID
 }
 
-// ChangePasswordReq Modify password structure
+// ChangePasswordReq 修改密码的入参结构
 type ChangePasswordReq struct {
 	ID          uint   `json:"-"`           // 从 JWT 中提取 user id，避免越权
 	Password    string `json:"password"`    // 密码
@@ -38,12 +38,12 @@ type ResetPassword struct {
 	Password string `json:"password" form:"password" gorm:"comment:用户登录密码"` // 用户登录密码
 }
 
-// SetUserAuth Modify user's auth structure
+// SetUserAuth 修改用户角色的入参结构
 type SetUserAuth struct {
 	AuthorityId uint `json:"authorityId"` // 角色ID
 }
 
-// SetUserAuthorities Modify user's auth structure
+// SetUserAuthorities 修改用户角色的入参结构
 type SetUserAuthorities struct {
 	ID           uint
 	AuthorityIds []uint `json:"authorityIds"` // 角色ID

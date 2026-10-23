@@ -15,7 +15,7 @@ import (
 
 type AuthorityMenuApi struct{}
 
-// GetMenu
+// GetMenu 获取菜单
 // @Tags      AuthorityMenu
 // @Summary   获取用户动态路由
 // @Security  ApiKeyAuth
@@ -36,7 +36,7 @@ func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysMenusResponse{Menus: menus}, "获取成功", c)
 }
 
-// GetBaseMenuTree
+// GetBaseMenuTree 获取基础菜单树
 // @Tags      AuthorityMenu
 // @Summary   获取用户动态路由
 // @Security  ApiKeyAuth
@@ -55,7 +55,7 @@ func (a *AuthorityMenuApi) GetBaseMenuTree(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysBaseMenusResponse{Menus: menus}, "获取成功", c)
 }
 
-// AddMenuAuthority
+// AddMenuAuthority 新增菜单角色
 // @Tags      AuthorityMenu
 // @Summary   增加menu和角色关联关系
 // @Security  ApiKeyAuth
@@ -84,7 +84,7 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 	}
 }
 
-// GetMenuAuthority
+// GetMenuAuthority 获取角色关联的菜单
 // @Tags      AuthorityMenu
 // @Summary   获取指定角色menu
 // @Security  ApiKeyAuth
@@ -114,7 +114,7 @@ func (a *AuthorityMenuApi) GetMenuAuthority(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"menus": menus}, "获取成功", c)
 }
 
-// AddBaseMenu
+// AddBaseMenu 新增基础菜单
 // @Tags      Menu
 // @Summary   新增菜单
 // @Security  ApiKeyAuth
@@ -149,7 +149,7 @@ func (a *AuthorityMenuApi) AddBaseMenu(c *gin.Context) {
 	response.OkWithMessage("添加成功", c)
 }
 
-// DeleteBaseMenu
+// DeleteBaseMenu 删除基础菜单
 // @Tags      Menu
 // @Summary   删除菜单
 // @Security  ApiKeyAuth
@@ -179,7 +179,7 @@ func (a *AuthorityMenuApi) DeleteBaseMenu(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// UpdateBaseMenu
+// UpdateBaseMenu 更新基础菜单
 // @Tags      Menu
 // @Summary   更新菜单
 // @Security  ApiKeyAuth
@@ -214,7 +214,7 @@ func (a *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
 	response.OkWithMessage("更新成功", c)
 }
 
-// GetBaseMenuById
+// GetBaseMenuById 按 ID 获取基础菜单
 // @Tags      Menu
 // @Summary   根据id获取菜单
 // @Security  ApiKeyAuth
@@ -244,7 +244,7 @@ func (a *AuthorityMenuApi) GetBaseMenuById(c *gin.Context) {
 	response.OkWithDetailed(systemRes.SysBaseMenuResponse{Menu: menu}, "获取成功", c)
 }
 
-// GetMenuRoles
+// GetMenuRoles 获取菜单关联的角色
 // @Tags      AuthorityMenu
 // @Summary   获取拥有指定菜单的角色ID列表
 // @Security  ApiKeyAuth
@@ -287,7 +287,7 @@ func (a *AuthorityMenuApi) GetMenuRoles(c *gin.Context) {
 	}, "获取成功", c)
 }
 
-// SetMenuRoles
+// SetMenuRoles 设置菜单角色
 // @Tags      AuthorityMenu
 // @Summary   全量覆盖某菜单关联的角色列表
 // @Security  ApiKeyAuth
@@ -314,7 +314,7 @@ func (a *AuthorityMenuApi) SetMenuRoles(c *gin.Context) {
 	response.OkWithMessage("设置成功", c)
 }
 
-// GetMenuList
+// GetMenuList 获取菜单列表
 // @Tags      Menu
 // @Summary   分页获取基础menu列表
 // @Security  ApiKeyAuth

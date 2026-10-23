@@ -13,7 +13,7 @@ import (
 
 type OperationRecordApi struct{}
 
-// DeleteSysOperationRecord
+// DeleteSysOperationRecord 删除系统操作记录
 // @Tags      SysOperationRecord
 // @Summary   删除SysOperationRecord
 // @Security  ApiKeyAuth
@@ -38,7 +38,7 @@ func (s *OperationRecordApi) DeleteSysOperationRecord(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// DeleteSysOperationRecordByIds
+// DeleteSysOperationRecordByIds 按 ID 批量删除系统操作记录
 // @Tags      SysOperationRecord
 // @Summary   批量删除SysOperationRecord
 // @Security  ApiKeyAuth
@@ -63,7 +63,7 @@ func (s *OperationRecordApi) DeleteSysOperationRecordByIds(c *gin.Context) {
 	response.OkWithMessage("批量删除成功", c)
 }
 
-// FindSysOperationRecord
+// FindSysOperationRecord 查询系统操作记录
 // @Tags      SysOperationRecord
 // @Summary   用id查询SysOperationRecord
 // @Security  ApiKeyAuth
@@ -93,7 +93,7 @@ func (s *OperationRecordApi) FindSysOperationRecord(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"reSysOperationRecord": reSysOperationRecord}, "查询成功", c)
 }
 
-// GetSysOperationRecordList
+// GetSysOperationRecordList 获取系统操作记录列表
 // @Tags      SysOperationRecord
 // @Summary   分页获取SysOperationRecord列表
 // @Security  ApiKeyAuth

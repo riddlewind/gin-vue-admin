@@ -14,7 +14,7 @@ const initOrderEnsureTables = system.InitOrderExternal - 1
 
 type ensureTables struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderEnsureTables, &ensureTables{})
 }

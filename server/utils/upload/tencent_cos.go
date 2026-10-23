@@ -17,7 +17,7 @@ import (
 
 type TencentCOS struct{}
 
-// UploadFile upload file to COS
+// UploadFile 上传文件到 COS
 func (*TencentCOS) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	client := NewClient()
 	f, openError := file.Open()
@@ -35,7 +35,7 @@ func (*TencentCOS) UploadFile(file *multipart.FileHeader) (string, string, error
 	return global.GVA_CONFIG.TencentCOS.BaseURL + "/" + global.GVA_CONFIG.TencentCOS.PathPrefix + "/" + fileKey, fileKey, nil
 }
 
-// DeleteFile delete file form COS
+// DeleteFile 从 COS 删除文件
 func (*TencentCOS) DeleteFile(key string) error {
 	client := NewClient()
 	name := global.GVA_CONFIG.TencentCOS.PathPrefix + "/" + key
@@ -47,7 +47,7 @@ func (*TencentCOS) DeleteFile(key string) error {
 	return nil
 }
 
-// NewClient init COS client
+// NewClient 初始化 COS 客户端
 func NewClient() *cos.Client {
 	urlStr, _ := url.Parse("https://" + global.GVA_CONFIG.TencentCOS.Bucket + ".cos." + global.GVA_CONFIG.TencentCOS.Region + ".myqcloud.com")
 	baseURL := &cos.BaseURL{BucketURL: urlStr}

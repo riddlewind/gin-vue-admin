@@ -11,7 +11,7 @@ import (
 
 type AutoCodeHistoryApi struct{}
 
-// First
+// 首条
 // @Tags      AutoCode
 // @Summary   获取meta信息
 // @Security  ApiKeyAuth
@@ -35,7 +35,7 @@ func (a *AutoCodeHistoryApi) First(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"meta": data}, "获取成功", c)
 }
 
-// Delete
+// 删除
 // @Tags      AutoCode
 // @Summary   删除回滚记录
 // @Security  ApiKeyAuth
@@ -60,7 +60,7 @@ func (a *AutoCodeHistoryApi) Delete(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// RollBack
+// RollBack 回滚
 // @Tags      AutoCode
 // @Summary   回滚自动生成代码
 // @Security  ApiKeyAuth
@@ -84,7 +84,7 @@ func (a *AutoCodeHistoryApi) RollBack(c *gin.Context) {
 	response.OkWithMessage("回滚成功", c)
 }
 
-// GetList
+// 获取列表
 // @Tags      AutoCode
 // @Summary   查询回滚记录
 // @Security  ApiKeyAuth

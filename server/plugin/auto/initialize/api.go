@@ -46,7 +46,7 @@ func Api(ctx context.Context) {
 		{Path: "/autoCode/getSysHistory", Description: "获取自动代码历史列表", ApiGroup: "代码生成器历史", Method: "POST"},
 		{Path: "/autoCode/addFunc", Description: "追加自动代码方法", ApiGroup: "代码生成器历史", Method: "POST"},
 
-		// skills
+		// 技能相关
 		{Path: "/skills/getTools", Description: "获取 AI 工具列表", ApiGroup: "skills", Method: "GET"},
 		{Path: "/skills/getSkillList", Description: "获取技能列表", ApiGroup: "skills", Method: "POST"},
 		{Path: "/skills/getSkillDetail", Description: "获取技能详情", ApiGroup: "skills", Method: "POST"},

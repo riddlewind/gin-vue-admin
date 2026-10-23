@@ -29,7 +29,7 @@ func GetMinio(endpoint, accessKeyID, secretAccessKey, bucketName string, useSSL 
 	if MinioClient != nil {
 		return MinioClient, nil
 	}
-	// Initialize minio client object.
+	// 初始化 MinIO 客户端对象。
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL, // Set to true if using https
@@ -54,7 +54,7 @@ func GetMinio(endpoint, accessKeyID, secretAccessKey, bucketName string, useSSL 
 
 func (m *Minio) UploadFile(file *multipart.FileHeader) (filePathres, key string, uploadErr error) {
 	f, openError := file.Open()
-	// mutipart.File to os.File
+	// 把 multipart.File 转成 os.File
 	if openError != nil {
 		global.GVA_LOG.Error("function file.Open() Failed", zap.Any("err", openError.Error()))
 		return "", "", errors.New("function file.Open() Failed, err:" + openError.Error())
@@ -100,7 +100,7 @@ func (m *Minio) DeleteFile(key string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	// Delete the object from MinIO
+	// 从 MinIO 删除对象
 	err := m.Client.RemoveObject(ctx, m.bucket, key, minio.RemoveObjectOptions{})
 	return err
 }

@@ -11,7 +11,7 @@ import (
 
 type DBApi struct{}
 
-// InitDB
+// InitDB 初始化数据库
 // @Tags     InitDB
 // @Summary  初始化用户数据库
 // @Produce  application/json
@@ -38,7 +38,7 @@ func (i *DBApi) InitDB(c *gin.Context) {
 	response.OkWithMessage("自动创建数据库成功", c)
 }
 
-// CheckDB
+// CheckDB 检查数据库
 // @Tags     CheckDB
 // @Summary  初始化用户数据库
 // @Produce  application/json

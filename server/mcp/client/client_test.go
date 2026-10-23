@@ -55,7 +55,7 @@ func TestTools(t *testing.T) {
 		}
 		ctx := context.Background()
 
-		// Initialize
+		// Initialize 初始化
 		initRequest := mcp.InitializeRequest{}
 		initRequest.Params.ProtocolVersion = mcp.LATEST_PROTOCOL_VERSION
 		initRequest.Params.ClientInfo = mcp.Implementation{

@@ -13,7 +13,7 @@ import (
 
 type AutoCodePackageApi struct{}
 
-// Create
+// 创建
 // @Tags      AutoCodePackage
 // @Summary   创建package
 // @Security  ApiKeyAuth
@@ -42,7 +42,7 @@ func (a *AutoCodePackageApi) Create(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 }
 
-// Delete
+// 删除
 // @Tags      AutoCode
 // @Summary   删除package
 // @Security  ApiKeyAuth
@@ -63,7 +63,7 @@ func (a *AutoCodePackageApi) Delete(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// All
+// 全部
 // @Tags      AutoCodePackage
 // @Summary   获取package
 // @Security  ApiKeyAuth
@@ -81,7 +81,7 @@ func (a *AutoCodePackageApi) All(c *gin.Context) {
 	response.OkWithDetailed(gin.H{"pkgs": data}, "获取成功", c)
 }
 
-// Templates
+// 模板
 // @Tags      AutoCodePackage
 // @Summary   获取package
 // @Security  ApiKeyAuth

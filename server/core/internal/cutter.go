@@ -51,10 +51,8 @@ func NewCutter(director string, level string, retentionDay int, options ...Cutte
 	return rotate
 }
 
-// Write satisfies the io.Writer interface. It writes to the
-// appropriate file handle that is currently being used.
-// If we have reached rotation time, the target file gets
-// automatically rotated, and also purged if necessary.
+// Write 实现 io.Writer 接口，把日志写入当前正在使用的文件句柄。
+// 若已到达轮转时间，会先自动轮转目标文件，并在必要时清理过期日志。
 func (c *Cutter) Write(bytes []byte) (n int, err error) {
 	c.mutex.Lock()
 	defer func() {

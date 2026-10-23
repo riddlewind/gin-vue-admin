@@ -22,8 +22,8 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				// Check for a broken connection, as it is not really a
-				// condition that warrants a panic stack trace.
+				// 先判断是不是"连接已断开"这类错误。
+				// 这种情况不值得记录完整的 panic 堆栈——客户端早就跑了，记了也没人看。
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
 					if se, ok := ne.Err.(*os.SyscallError); ok {
@@ -39,7 +39,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
-					// If the connection is dead, we can't write a status to it.
+					// 连接已经断了，此时无法再往响应里写状态码，只能记日志后中断。
 					_ = c.Error(err.(error)) // nolint: errcheck
 					c.Abort()
 					return

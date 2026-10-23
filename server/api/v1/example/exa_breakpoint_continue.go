@@ -17,7 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// BreakpointContinue
+// 断点续传
 // @Tags      ExaFileUploadAndDownload
 // @Summary   断点续传到服务器
 // @Security  ApiKeyAuth
@@ -77,7 +77,7 @@ func (b *FileUploadAndDownloadApi) BreakpointContinue(c *gin.Context) {
 	response.OkWithMessage("切片创建成功", c)
 }
 
-// FindFile
+// 查询文件
 // @Tags      ExaFileUploadAndDownload
 // @Summary   查找文件
 // @Security  ApiKeyAuth
@@ -99,7 +99,7 @@ func (b *FileUploadAndDownloadApi) FindFile(c *gin.Context) {
 	}
 }
 
-// BreakpointContinueFinish
+// 断点续传完成
 // @Tags      ExaFileUploadAndDownload
 // @Summary   创建文件
 // @Security  ApiKeyAuth
@@ -120,7 +120,7 @@ func (b *FileUploadAndDownloadApi) BreakpointContinueFinish(c *gin.Context) {
 	}
 }
 
-// RemoveChunk
+// 移除分片
 // @Tags      ExaFileUploadAndDownload
 // @Summary   删除切片
 // @Security  ApiKeyAuth

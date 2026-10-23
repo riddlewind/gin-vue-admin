@@ -14,7 +14,7 @@ const initOrderUser = initOrderAuthority + 1
 
 type initUser struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderUser, &initUser{})
 }

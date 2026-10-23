@@ -19,7 +19,7 @@ type InitDB struct {
 }
 
 // MysqlEmptyDsn msyql 空数据库 建库链接
-// Author SliverHorn
+// 作者 SliverHorn
 func (i *InitDB) MysqlEmptyDsn() string {
 	if i.Host == "" {
 		i.Host = "127.0.0.1"
@@ -31,7 +31,7 @@ func (i *InitDB) MysqlEmptyDsn() string {
 }
 
 // PgsqlEmptyDsn pgsql 空数据库 建库链接
-// Author SliverHorn
+// 作者 SliverHorn
 func (i *InitDB) PgsqlEmptyDsn() string {
 	if i.Host == "" {
 		i.Host = "127.0.0.1"
@@ -43,7 +43,7 @@ func (i *InitDB) PgsqlEmptyDsn() string {
 }
 
 // SqliteEmptyDsn sqlite 空数据库 建库链接
-// Author Kafumio
+// 作者 Kafumio
 func (i *InitDB) SqliteEmptyDsn() string {
 	separator := string(os.PathSeparator)
 	return i.DBPath + separator + i.DBName + ".db"

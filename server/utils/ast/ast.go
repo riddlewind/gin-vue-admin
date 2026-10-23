@@ -236,7 +236,7 @@ func CreateApiStructAst(apis []system.SysApi) *[]ast.Expr {
 // CheckImport 检查是否存在Import
 func CheckImport(file *ast.File, importPath string) bool {
 	for _, imp := range file.Imports {
-		// Remove quotes around the import path
+		// 去掉导入路径两端的引号
 		path := imp.Path.Value[1 : len(imp.Path.Value)-1]
 
 		if path == importPath {

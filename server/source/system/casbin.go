@@ -13,7 +13,7 @@ const initOrderCasbin = initOrderApiIgnore + 1
 
 type initCasbin struct{}
 
-// auto run
+// 包初始化时由 init() 自动执行
 func init() {
 	system.RegisterInit(initOrderCasbin, &initCasbin{})
 }

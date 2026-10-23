@@ -11,7 +11,7 @@ import (
 
 type AttachmentCategoryApi struct{}
 
-// GetCategoryList
+// 获取分类列表
 // @Tags      GetCategoryList
 // @Summary   媒体库分类列表
 // @Security  AttachmentCategory
@@ -28,7 +28,7 @@ func (a *AttachmentCategoryApi) GetCategoryList(c *gin.Context) {
 	response.OkWithData(res, c)
 }
 
-// AddCategory
+// 新增分类
 // @Tags      AddCategory
 // @Summary   添加媒体库分类
 // @Security  AttachmentCategory
@@ -52,7 +52,7 @@ func (a *AttachmentCategoryApi) AddCategory(c *gin.Context) {
 	response.OkWithMessage("创建/更新成功", c)
 }
 
-// DeleteCategory
+// 删除分类
 // @Tags      DeleteCategory
 // @Summary   删除分类
 // @Security  AttachmentCategory

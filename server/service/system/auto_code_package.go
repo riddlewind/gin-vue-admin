@@ -115,7 +115,7 @@ func (s *autoCodePackage) Delete(ctx context.Context, info common.GetById) error
 	return nil
 }
 
-// DeleteByNames
+// DeleteByNames 按名称删除
 // @author: [piexlmax](https://github.com/piexlmax)
 // @author: [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodePackage) DeleteByNames(ctx context.Context, names []string) error {

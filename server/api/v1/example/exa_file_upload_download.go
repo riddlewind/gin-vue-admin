@@ -13,7 +13,7 @@ import (
 
 type FileUploadAndDownloadApi struct{}
 
-// UploadFile
+// UploadFile 上传文件
 // @Tags      ExaFileUploadAndDownload
 // @Summary   上传文件示例
 // @Security  ApiKeyAuth
@@ -58,7 +58,7 @@ func (b *FileUploadAndDownloadApi) EditFileName(c *gin.Context) {
 	response.OkWithMessage("编辑成功", c)
 }
 
-// DeleteFile
+// 删除文件
 // @Tags      ExaFileUploadAndDownload
 // @Summary   删除文件
 // @Security  ApiKeyAuth
@@ -81,7 +81,7 @@ func (b *FileUploadAndDownloadApi) DeleteFile(c *gin.Context) {
 	response.OkWithMessage("删除成功", c)
 }
 
-// GetFileList
+// 获取文件列表
 // @Tags      ExaFileUploadAndDownload
 // @Summary   分页文件列表
 // @Security  ApiKeyAuth
@@ -111,7 +111,7 @@ func (b *FileUploadAndDownloadApi) GetFileList(c *gin.Context) {
 	}, "获取成功", c)
 }
 
-// ImportURL
+// ImportURL 导入 URL
 // @Tags      ExaFileUploadAndDownload
 // @Summary   导入URL
 // @Security  ApiKeyAuth

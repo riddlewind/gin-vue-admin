@@ -9,16 +9,16 @@ type Server struct {
 	Email     Email   `mapstructure:"email" json:"email" yaml:"email"`
 	System    System  `mapstructure:"system" json:"system" yaml:"system"`
 	Captcha   Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
-	// auto
+	// 自动初始化相关
 	AutoCode Autocode `mapstructure:"autocode" json:"autocode" yaml:"autocode"`
-	// gorm
+	// GORM 相关
 	Mysql  Mysql           `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Mssql  Mssql           `mapstructure:"mssql" json:"mssql" yaml:"mssql"`
 	Pgsql  Pgsql           `mapstructure:"pgsql" json:"pgsql" yaml:"pgsql"`
 	Oracle Oracle          `mapstructure:"oracle" json:"oracle" yaml:"oracle"`
 	Sqlite Sqlite          `mapstructure:"sqlite" json:"sqlite" yaml:"sqlite"`
 	DBList []SpecializedDB `mapstructure:"db-list" json:"db-list" yaml:"db-list"`
-	// oss
+	// OSS 相关
 	Local        Local        `mapstructure:"local" json:"local" yaml:"local"`
 	Qiniu        Qiniu        `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
 	AliyunOSS    AliyunOSS    `mapstructure:"aliyun-oss" json:"aliyun-oss" yaml:"aliyun-oss"`

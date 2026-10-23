@@ -313,15 +313,15 @@ func GenerateSearchFormItem(field systemReq.AutoCodeField) string {
 	return result
 }
 
-// GenerateTableColumn generates HTML for table column based on field properties
+// GenerateTableColumn 根据字段属性生成表格列的 HTML
 func GenerateTableColumn(field systemReq.AutoCodeField) string {
-	// Add sortable attribute if needed
+	// 按需添加 sortable 属性
 	sortAttr := ""
 	if field.Sort {
 		sortAttr = " sortable"
 	}
 
-	// Handle different field types
+	// 按字段类型分别处理
 	if field.CheckDataSource {
 		result := fmt.Sprintf(`<el-table-column%s align="left" label="%s" prop="%s" width="120">
 `,

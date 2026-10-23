@@ -11,7 +11,7 @@ import (
 
 type EmailApi struct{}
 
-// EmailTest
+// EmailTest 邮件测试
 // @Tags      System
 // @Summary   发送测试邮件
 // @Security  ApiKeyAuth
@@ -28,7 +28,7 @@ func (s *EmailApi) EmailTest(c *gin.Context) {
 	response.OkWithMessage("发送成功", c)
 }
 
-// SendEmail
+// SendEmail 发送邮件
 // @Tags      System
 // @Summary   发送邮件
 // @Security  ApiKeyAuth

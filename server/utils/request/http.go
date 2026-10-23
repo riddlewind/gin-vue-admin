@@ -66,7 +66,7 @@ func doJSONRequest(
 		ctx = context.Background()
 	}
 
-	// URL
+	// URL 地址
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
