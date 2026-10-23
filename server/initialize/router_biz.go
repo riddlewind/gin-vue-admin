@@ -66,6 +66,27 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	demoRouter := router.RouterGroupApp.Demo
 	demoRouter.InitBookRouter(privateGroup)
 
+	// [注册点 5/5] 巡检记录模块
+	//
+	// [注意] 这里**不能**像上面 demo 那样先取到局部变量再调用：
+	//
+	//	bad := router.RouterGroupApp.InspectionRecordRouter   // 这是一次值拷贝！
+	//	bad.SetInspectionRecordRouter(...)                    // 改的是副本，全局那个还是空的
+	//
+	// 因为 InspectionRecordRouter 里存了 PublicGroup / PrivateGroup 两个字段，
+	// 值拷贝之后指针方法的接收者是副本的地址，写进去的字段值不会回到
+	// RouterGroupApp 上。路由本身还是能注册成功（那是作用在 gin 引擎上的），
+	// 但"以后再补注册路由"时从 RouterGroupApp 取出来的分组会是 nil —— 属于
+	// 那种当场看不出来、几个月后才炸的 bug。
+	//
+	// 正确写法：直接链式调用字段。RouterGroupApp 是 *RouterGroup，
+	// 字段可寻址，Go 会自动对字段取地址，改的就是全局那一份。
+	//
+	// [注意] 传参顺序是 (publicGroup, privateGroup)，
+	// 而上面 routers[0] / routers[1] 的顺序是"先私有再公开"，方向相反，别看串。
+	// 这个函数内部对 privateGroup 做了 nil 检查，传反了会在启动时立刻 panic。
+	router.RouterGroupApp.InspectionRecordRouter.SetInspectionRecordRouter(publicGroup, privateGroup)
+
 	// [注意] 只要 privateGroup 被用到了，holder 其实就可以删；
 	// 但如果 publicGroup 没被用，就会报"声明未使用"。所以最省事的是保留 holder。
 	holder(publicGroup, privateGroup)

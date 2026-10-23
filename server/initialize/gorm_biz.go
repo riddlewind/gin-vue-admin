@@ -20,6 +20,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	// [注册点 4/5] 导入你的业务模型包
 	"github.com/flipped-aurora/gin-vue-admin/server/model/demo"
+	// [注册点 4/5] 巡检记录模块的模型
+	"github.com/flipped-aurora/gin-vue-admin/server/model/inspectionrecord"
 )
 
 func bizModel() error {
@@ -42,7 +44,8 @@ func bizModel() error {
 	// [注意] 传指针 &demo.Book{} 而不是 demo.Book{}。
 	// 传值也能跑，但 GORM 需要通过指针反射拿到类型信息，指针更规范。
 	err := db.AutoMigrate(
-		&demo.Book{}, // 图书示例表 demo_books
+		&demo.Book{},                         // 图书示例表 demo_books
+		&inspectionrecord.InspectionRecord{}, // 巡检记录表 inspection_records
 	)
 	if err != nil {
 		// [Go] 这里没有 log 也没有 panic，而是把错误返回给调用方。
