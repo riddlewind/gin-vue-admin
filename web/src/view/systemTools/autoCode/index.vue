@@ -19,7 +19,7 @@
           type="textarea"
           :rows="5"
           :maxlength="2000"
-          :placeholder="`现已完全免费\n试试复制一张图片然后按下ctrl+v或者commend+v\n试试描述你的表，让AI帮你完成。\n此功能需要到插件市场个人中心获取自己的AI-Path，把AI-Path填入config.yaml下的autocode-->ai-path，重启项目即可使用。\n按下 Ctrl+Enter 或 Cmd+Enter 直接生成`"
+          :placeholder="`试试复制一张图片然后按下ctrl+v或者commend+v\n试试描述你的表，让AI帮你完成。\n两种接法任一即可：① config.yaml 里配 autocode-->ai-provider / ai-base-url / ai-key / ai-model（OpenAI 兼容中转站，如 deepseek、sensenova 等，无需 AiPath）；② 配 autocode-->ai-path（官方托管）。\n代码生成器想单独换模型可用 autocode-->ai-codegen-model，留空则跟随 ai-model。\n贴图识别必须用支持图片输入的模型，用 autocode-->ai-vision-model 单独指定，留空则跟随 ai-model。\n按下 Ctrl+Enter 或 Cmd+Enter 直接生成`"
           resize="none"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -35,17 +35,19 @@
                   target="_blank"
               >插件市场个人中心</a
               >申请AIPath，填入config.yaml的ai-path属性即可使用。
+              若已配置 autocode.ai-provider（OpenAI 兼容中转站），则无需 AiPath。
               </div>
             </template>
             <el-button
                 :disabled="form.onlyTemplate"
+                :loading="recognizing || generating"
                 type="primary"
                 @click="eyeFunc()"
             >
               <el-icon size="18">
                 <ai-gva />
               </el-icon>
-              识图
+              {{ recognizing ? '识别中' : '识图' }}
             </el-button>
           </el-tooltip>
         </div>
@@ -60,17 +62,19 @@
                   target="_blank"
                   >插件市场个人中心</a
                 >申请AIPath，填入config.yaml的ai-path属性即可使用。
+                若已配置 autocode.ai-provider（OpenAI 兼容中转站），则无需 AiPath。
               </div>
             </template>
             <el-button
               :disabled="form.onlyTemplate"
+              :loading="generating || recognizing"
               type="primary"
               @click="llmAutoFunc()"
             >
               <el-icon size="18">
                 <ai-gva />
               </el-icon>
-              生成
+              {{ generating ? '生成中' : '生成' }}
             </el-button>
           </el-tooltip>
         </div>
@@ -822,6 +826,7 @@
     preview,
     getMeta,
     getPackageApi,
+    createPackageApi,
     llmAuto
   } from '@/api/autoCode'
   import { getDict } from '@/utils/dictionary'
@@ -858,16 +863,36 @@
       if (items[i].type.indexOf('image') !== -1) {
         const file = items[i].getAsFile();
         const reader = new FileReader();
-        reader.onload =async (e) => {
-          const base64String = e.target.result;
-          const res = await llmAuto({ _file_path: base64String,mode:"eye" })
-          if (res.code === 0) {
-            prompt.value = res.data.text
-            llmAutoFunc()
-          }
+        reader.onload = async (e) => {
+          await recognizeImageToAutoCode(e.target.result)
         };
         reader.readAsDataURL(file);
       }
+    }
+  };
+
+  // 上游免费额度极小（连续 2~3 次请求就 429），连点等于自己把额度打满，
+  // 所以两个 AI 按钮请求期间一律 loading + 禁止重入。
+  const generating = ref(false)
+  const recognizing = ref(false)
+
+  // 图片 -> 中文描述 -> 代码生成。粘贴和选文件两条路径共用，
+  // 避免两边各写一份、改一处漏一处。
+  // [注意] eye 失败时（后端会明确说模型不支持图片）不要再拿道歉文本去调 ai，
+  // 否则报错会变成跟图片毫无关系的「不是合法 JSON」。错误提示由 request 拦截器统一弹出。
+  const recognizeImageToAutoCode = async (base64String) => {
+    if (!base64String || recognizing.value || generating.value) return
+    recognizing.value = true
+    try {
+      const res = await llmAuto({ _file_path: base64String, mode: 'eye' })
+      const text = res?.code === 0 ? res?.data?.text || '' : ''
+      if (!text.trim()) return
+      prompt.value = text
+      await llmAutoFunc()
+    } catch (e) {
+      // 网络层异常，拦截器已提示
+    } finally {
+      recognizing.value = false
     }
   };
 
@@ -891,13 +916,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = async (e) => {
-          const base64String = e.target.result;
-
-          const res = await llmAuto({ _file_path: base64String,mode:'eye' })
-          if (res.code === 0) {
-            prompt.value = res.data.text
-            llmAutoFunc()
-          }
+          await recognizeImageToAutoCode(e.target.result)
         };
         reader.readAsDataURL(file);
       }
@@ -908,6 +927,7 @@
 
 
   const llmAutoFunc = async (flag) => {
+    if (generating.value) return
     if (flag && !form.value.structName) {
       ElMessage.error('请输入结构体名称')
       return
@@ -932,13 +952,26 @@
       }
     }
 
-    const res = await llmAuto({
-      prompt: flag ? '结构体名称为' + form.value.structName : prompt.value,
-      mode: "ai"
-    })
-    if (res.code === 0) {
+    generating.value = true
+    try {
+      const res = await llmAuto({
+        prompt: flag ? '结构体名称为' + form.value.structName : prompt.value,
+        mode: "ai"
+      })
+      // 失败提示由 request 拦截器统一弹出（含上游 429 的人话提示）
+      if (res.code !== 0) return
+
+      let json
+      try {
+        json = JSON.parse(res.data.text)
+      } catch (e) {
+        ElMessage.error('AI 返回的内容不是合法 JSON，已停止填充，请重试')
+        return
+      }
+
+      // 覆盖前先记住用户自己选的模板包，AI 给的包名不合法时要还原回去
+      const prevPkg = form.value.package
       form.value.fields = []
-      const json = JSON.parse(res.data.text)
       json.fields?.forEach((item) => {
         item.fieldName = toUpperCase(item.fieldName)
       })
@@ -950,6 +983,43 @@
       form.value.generateServer = true
       form.value.generateWeb = true
 
+      // 「选择模板」的 package 只能是模板包列表里的值（下拉框不可自由输入），
+      // 列表来自后端扫描 server/service 和 server/plugin 目录，AI 自己编的包名基本对不上，
+      // 留着会让下拉框空白、提交时报「请选择package」。
+      const list = await ensurePkgs()
+      if (!list.length) {
+        ElMessage.warning(
+          '没能取到模板包列表，请确认「选择模板」里的包名，再点提交'
+        )
+      } else {
+        const matched = matchPkg(form.value.package)
+        if (matched) {
+          form.value.package = matched.packageName
+        } else {
+          const kept = matchPkg(prevPkg)
+          const tip = `AI 建议的 package「${json.package || '空'}」不在模板包列表中`
+          if (kept) {
+            form.value.package = kept.packageName
+            ElMessage.warning(`${tip}，已保留你原先选的「${kept.packageName}」`)
+          } else {
+            // 列表里没有这个包 → 提供一键创建。
+            // 创建会在 server/service/<包名> 下生成一整套包骨架并 AST 注入 enter.go，
+            // 属于会改动源码的操作，所以先让用户确认，不静默执行。
+            const created = await offerCreatePkg(json.package)
+            if (!created) {
+              const names = list.slice(0, 6).map((p) => p.packageName)
+              form.value.package = ''
+              ElMessage.warning(
+                `${tip}，已清空，请在「选择模板」里手动选一个。可选：${names.join('、')}${list.length > 6 ? ' 等' : ''}`
+              )
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // 网络层异常，拦截器已提示
+    } finally {
+      generating.value = false
     }
   }
 
@@ -1526,6 +1596,80 @@
     if (res.code === 0) {
       pkgs.value = res.data.pkgs
     }
+  }
+
+  // 保证模板包列表可用（AI 生成后要拿它校验 package）
+  const ensurePkgs = async () => {
+    if (!pkgs.value.length) {
+      try {
+        await getPkgs()
+      } catch (e) {
+        // 取不到就按空列表处理，调用处会退回「让用户手动选」
+      }
+    }
+    return pkgs.value
+  }
+
+  // 包名归一：去掉大小写、横线、下划线、空格后再比，容忍 AI 写成 device-check 这类写法
+  const normPkg = (s) => String(s || '').toLowerCase().replace(/[-_\s]/g, '')
+  const matchPkg = (name) => {
+    const raw = String(name || '').trim()
+    if (!raw) return null
+    return (
+      pkgs.value.find((p) => p.packageName === raw) ||
+      pkgs.value.find(
+        (p) => String(p.packageName).toLowerCase() === raw.toLowerCase()
+      ) ||
+      pkgs.value.find((p) => normPkg(p.packageName) === normPkg(raw)) ||
+      null
+    )
+  }
+
+  // 包目录名归一：全小写，只保留字母数字下划线（GVA 用目录名当 Go 包名，不能有空格和横线）
+  const toPkgName = (s) =>
+    String(s || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '')
+
+  // AI 建议的包不存在时，询问是否直接创建模板包。
+  // 创建动作的真实后果：在 server/service/<包名> 下生成 service/api/router/model 骨架，
+  // 并用 AST 注入到各 enter.go（改动源码，需重新编译后端才生效），所以必须让用户确认。
+  const offerCreatePkg = async (suggest) => {
+    const name = toPkgName(suggest)
+    // 空名或数字开头直接放弃，交给「手动选」那条路
+    if (!name || /^[0-9]/.test(name)) {
+      return false
+    }
+    try {
+      await ElMessageBox.confirm(
+        `模板包「${name}」不存在。创建会在 server/service/${name} 下生成一套基础目录与文件，并把新包注册到 enter.go（需重新编译后端才生效）。`,
+        '创建模板包',
+        {
+          confirmButtonText: '创建并使用',
+          cancelButtonText: '先不创建',
+          type: 'warning'
+        }
+      )
+    } catch (e) {
+      return false
+    }
+
+    const res = await createPackageApi({
+      packageName: name,
+      template: 'package',
+      label: `${name}包`,
+      desc: 'AI 代码生成时自动创建的模板包'
+    })
+    // 失败提示由 request 拦截器统一弹出（如「为go的关键字」「存在相同PackageName」）
+    if (res.code !== 0) return false
+
+    await getPkgs()
+    const hit = matchPkg(name)
+    if (!hit) return false
+    form.value.package = hit.packageName
+    ElMessage.success(`已创建模板包「${hit.packageName}」，重启后端后生效`)
+    return true
   }
 
   const goPkgs = () => {
