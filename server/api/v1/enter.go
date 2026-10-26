@@ -15,6 +15,7 @@
 package v1
 
 import (
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/customer"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/demo"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/inspectionrecord"
@@ -44,16 +45,19 @@ type ApiGroup struct {
 	// 嵌套则要多一层 v1.ApiGroupApp.DemoApiGroup.BookApi.CreateXxx。
 	// 字段名和类型名相同是允许的（Go 不禁止，只是读起来容易看花眼）。
 	InspectionRecordApi inspectionrecord.InspectionRecordApi
+	CustomerApiGroup    customer.
+
+		// NewApiGroup 构造并装配整个 API 聚合
+		//
+		// [Go] 返回 *ApiGroup 而不是 ApiGroup，是为了和原来 new(ApiGroup) 的类型保持一致
+		// （ApiGroupApp 一直是 *ApiGroup，router 层直接解引用，调用方一个字都不用改）。
+		//
+		// [注意] 这里只显式初始化了 InspectionRecordApi。System / Example / Demo 三个模块的
+		// Api 结构体都是空结构体、或者只依赖各自 enter.go 里的包级变量，零值即"装配完成"，
+		// 不需要在这里赋值。以后哪个模块也开始用字段注入，就往这个 return 里加一行。
+		ApiGroup
 }
 
-// NewApiGroup 构造并装配整个 API 聚合
-//
-// [Go] 返回 *ApiGroup 而不是 ApiGroup，是为了和原来 new(ApiGroup) 的类型保持一致
-// （ApiGroupApp 一直是 *ApiGroup，router 层直接解引用，调用方一个字都不用改）。
-//
-// [注意] 这里只显式初始化了 InspectionRecordApi。System / Example / Demo 三个模块的
-// Api 结构体都是空结构体、或者只依赖各自 enter.go 里的包级变量，零值即"装配完成"，
-// 不需要在这里赋值。以后哪个模块也开始用字段注入，就往这个 return 里加一行。
 func NewApiGroup() *ApiGroup {
 	return &ApiGroup{
 		InspectionRecordApi: inspectionrecord.NewInspectionRecordApi(),

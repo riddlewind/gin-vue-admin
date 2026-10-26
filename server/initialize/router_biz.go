@@ -90,4 +90,8 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	// [注意] 只要 privateGroup 被用到了，holder 其实就可以删；
 	// 但如果 publicGroup 没被用，就会报"声明未使用"。所以最省事的是保留 holder。
 	holder(publicGroup, privateGroup)
+	{
+		customerRouter := router.RouterGroupApp.Customer
+		customerRouter.InitCustomerRouter(privateGroup, publicGroup)
+	}
 }

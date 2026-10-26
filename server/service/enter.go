@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/flipped-aurora/gin-vue-admin/server/service/customer"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/demo"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/inspectionrecord"
@@ -20,12 +21,15 @@ type ServiceGroup struct {
 	DemoServiceGroup demo.ServiceGroup
 	// [注册点 1/5] 巡检记录模块
 	InspectionRecordService inspectionrecord.InspectionRecordService
+	CustomerServiceGroup    customer.
+
+		// NewServiceGroup 构造 Service 聚合，按需初始化各业务模块的 Service
+		//
+		// [Go] 返回 *ServiceGroup 而不是值：上层 ServiceGroupApp 是包级变量，
+		// 指针能保证全局拿到的是同一个实例（值拷贝会让每个调用方各持一份副本）。
+		ServiceGroup
 }
 
-// NewServiceGroup 构造 Service 聚合，按需初始化各业务模块的 Service
-//
-// [Go] 返回 *ServiceGroup 而不是值：上层 ServiceGroupApp 是包级变量，
-// 指针能保证全局拿到的是同一个实例（值拷贝会让每个调用方各持一份副本）。
 func NewServiceGroup() *ServiceGroup {
 	return &ServiceGroup{
 		InspectionRecordService: inspectionrecord.NewInspectionRecordService(),
