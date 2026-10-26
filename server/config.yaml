@@ -11,6 +11,12 @@ autocode:
     server: server
     module: github.com/flipped-aurora/gin-vue-admin/server
     ai-path: ""
+    ai-provider: gptgod
+    ai-base-url: "https://api.gptgod.online/v1"
+    ai-key: ""
+    ai-model: "deepseek-v4.1-flash"
+    ai-codegen-model: "deepseek-v4.1-flash"
+    ai-vision-model: "deepseek-v4.1-flash"
 aws-s3:
     bucket: xxxxx-10005608
     region: ap-shanghai
